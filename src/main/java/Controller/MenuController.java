@@ -2,7 +2,9 @@ package Controller;
 
 import Common.Interface.*;
 import Common.Tools.Pair;
+import lombok.SneakyThrows;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,50 +40,40 @@ public class MenuController implements Menu {
 
     private Input input;
 
-    public boolean Init(Object menuObject, Output output, Input input)
-    {
-        try {
-            this.output = output;
-            this.input = input;
+    public void Init(Object menuObject, Output output, Input input) {
+        this.output = output;
+        this.input = input;
 
-            appMenu = menuObject;
+        appMenu = menuObject;
 
-            Class<?> objectClass = requireNonNull(menuObject).getClass();
-            int maxId = 0;
+        Class<?> objectClass = requireNonNull(menuObject).getClass();
+        int maxId = 0;
 
-            for (Method method: objectClass.getDeclaredMethods())
-            {
-                if (method.isAnnotationPresent(MenuItem.class))
-                {
-                    method.setAccessible(true);
+        for (Method method : objectClass.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(MenuItem.class)) {
+                method.setAccessible(true);
 
-                    var item = method.getAnnotation(MenuItem.class);
+                var item = method.getAnnotation(MenuItem.class);
 
-                    int order = item.Order();
+                int order = item.Order();
 
-                    if (order > maxId)
-                        maxId = order;
+                if (order > maxId)
+                    maxId = order;
 
-                    if (order == 0)
-                    {
-                        ++maxId;
-                        order = maxId;
-                    }
-
-                    menuMethods.put(item.Key(), Pair.of(item, method));
-                    menuItemList.add(item);
+                if (order == 0) {
+                    ++maxId;
+                    order = maxId;
                 }
+
+                menuMethods.put(item.Key(), Pair.of(item, method));
+                menuItemList.add(item);
             }
-
-            menuItemList.sort((a, b) -> Integer.compare(a.Order(), b.Order()));
-        }
-        catch (Exception e) {
-            return false;
         }
 
-        return true;
+        menuItemList.sort((a, b) -> Integer.compare(a.Order(), b.Order()));
     }
 
+    @SneakyThrows
     public void Loop() {
         ShowMenu();
 
@@ -98,12 +90,8 @@ public class MenuController implements Menu {
             }
 
             output.printLn(item.getLeft().Name());
-            try {
-                item.getRight().invoke(appMenu);
-            }
-            catch (Exception exc)
-            {
-            }
+
+            item.getRight().invoke(appMenu);
         }
     }
 
