@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="task01.addressbook:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/task01_addressbook_jar</output-path>
+    <root id="archive" name="task01.addressbook.jar">
+      <element id="module-output" name="task01.addressbook" />
+    </root>
+  </artifact>
+</component>
