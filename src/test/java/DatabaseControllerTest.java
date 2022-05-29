@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 
 public class DatabaseControllerTest {
 
-    private final CityInfo city1 = createCity(1, "Kyiv");
+    private final CityInfo city1 = createCity("Kyiv");
 
-    private final CityInfo city2 = createCity(2, "New-York");
+    private final CityInfo city2 = createCity("New-York");
 
-    private final CityInfo city3 = createCity(3, "Paris");
+    private final CityInfo city3 = createCity("Paris");
 
-    private final UserInfo user = createUser(1, "Piter Pen", 1);
+    private final UserInfo user = createUser("Piter Pen", 1);
 
     @Test
     public void insertTest() {
@@ -71,21 +71,19 @@ public class DatabaseControllerTest {
         assertArrayEquals(citiesId.toArray(), new Integer[]{1,2,3});
     }
 
-    private CityInfo createCity(int id, String name)
+    private CityInfo createCity(String name)
     {
         var city = new CityInfo();
 
-        city.setId(id);
         city.setName(name);
 
         return city;
     }
 
-    private UserInfo createUser(int id, String fio, int cityId)
+    private UserInfo createUser(String fio, int cityId)
     {
         var user = new UserInfo();
 
-        user.setId(id);
         user.setFIO(fio);
         user.setCityId(cityId);
 

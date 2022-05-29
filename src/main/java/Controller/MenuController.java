@@ -55,16 +55,6 @@ public class MenuController implements Menu {
 
                 var item = method.getAnnotation(MenuItem.class);
 
-                int order = item.Order();
-
-                if (order > maxId)
-                    maxId = order;
-
-                if (order == 0) {
-                    ++maxId;
-                    order = maxId;
-                }
-
                 menuMethods.put(item.Key(), Pair.of(item, method));
                 menuItemList.add(item);
             }

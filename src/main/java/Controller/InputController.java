@@ -1,16 +1,23 @@
 package Controller;
 
 import Common.Interface.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Scanner;
+import java.util.function.Supplier;
 
 public class InputController implements Input {
 
     private final Output output;
 
-    public InputController(Output output)
-    {
+    @Setter
+    private Supplier<String> source;
+
+    public InputController(Output output) {
         this.output = output;
+
+        source = InputController::getStringDefault;
     }
 
     @Override
@@ -18,8 +25,7 @@ public class InputController implements Input {
         if (description != null)
             output.print(description);
 
-        Scanner in = new Scanner(System.in);
-        return in.next().charAt(0);
+        return source.get().charAt(0);
     }
 
     @Override
@@ -27,9 +33,7 @@ public class InputController implements Input {
         if (description != null)
             output.print(description);
 
-        Scanner in = new Scanner(System.in);
-
-        return in.next();
+        return source.get();
     }
 
     @Override
@@ -37,7 +41,13 @@ public class InputController implements Input {
         if (description != null)
             output.print(description);
 
+        return Integer.valueOf(source.get());
+    }
+
+    private static String getStringDefault()
+    {
         Scanner in = new Scanner(System.in);
-        return in.nextInt();
+
+        return in.next();
     }
 }

@@ -2,57 +2,73 @@ import Common.Interface.*;
 import Controller.MenuController;
 import lombok.Getter;
 import lombok.Setter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.mockito.stubbing.OngoingStubbing;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class MenuControllerTest {
+
+    @Mock
+    private Input input;
+    @Mock
+    private Output output;
+
+    @BeforeEach
+    void setUp()
+    {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     public void commandTest()
     {
-        OutputTest output = new OutputTest();
-        InputTest input = new InputTest('m');
+        boolean isCall = false;
+        Mockito.when(input.GetChar(any())).thenReturn('m');
 
         var menu = new MenuController();
-        var testMenu = new TestMenu(menu, output, input);
-
+        TestMenu testMenu = new TestMenu(menu);
 
         menu.Init(testMenu, output, input);
         menu.Loop();
 
-        assertEquals(output.getString(), " 1) Menu (m)\r\n");
+        assertEquals(testMenu.isExecuted, true);
     }
 
     @Test
     public void wrongTest() {
+        Mockito.when(input.GetChar(any())).thenReturn('x').thenReturn('m');
+
         var menu = new MenuController();
-
-        OutputTestExit output = new OutputTestExit(menu);
-        InputTest input = new InputTest('x');
-
-        var testMenu = new TestMenu(menu, output, input);
-
+        var testMenu = new TestMenu(menu);
 
         menu.Init(testMenu, output, input);
         menu.Loop();
 
-        assertEquals(output.getString(), "Wrong command.");
+        verify(output).printLn("Wrong command.");
+        assertEquals(testMenu.isExecuted, true);
     }
 
     private class TestMenu
     {
-        private Input input;
-
-        private Output output;
+        @Getter
+        private boolean isExecuted;
 
         private Menu menu;
 
-        public TestMenu(Menu menu, Output output, Input input)
+        public TestMenu(Menu menu)
         {
-            this.input = input;
-            this.output = output;
+            isExecuted = false;
             this.menu = menu;
         }
 
@@ -60,88 +76,9 @@ public class MenuControllerTest {
         public void ShowMenu()
         {
             menu.ShowMenu();
-
             menu.Exit();
-        }
-    }
 
-    @Setter @Getter
-    private class OutputTestExit implements Output{
-
-        private String string;
-
-        private Menu menu;
-
-        public OutputTestExit(Menu menu)
-        {
-            this.menu = menu;
-        }
-
-        @Override
-        public void print(String str) {
-            string = str;
-
-            menu.Exit();
-        }
-
-        @Override
-        public void printLn(String str) {
-            string = str;
-
-            menu.Exit();
-        }
-
-        @Override
-        public void format(String format, Object... args) {
-            string = String.format(format, args);
-
-            menu.Exit();
-        }
-    }
-
-    @Setter @Getter
-    private class OutputTest implements Output{
-
-        private String string;
-
-        @Override
-        public void print(String str) {
-            string = str;
-        }
-
-        @Override
-        public void printLn(String str) {
-            string = str;
-        }
-
-        @Override
-        public void format(String format, Object... args) {
-            string = String.format(format, args);
-        }
-    }
-
-    private class InputTest implements Input {
-
-        private Character character;
-
-        public InputTest(Character character)
-        {
-            this.character = character;
-        }
-
-        @Override
-        public Character GetChar(String description) {
-            return character;
-        }
-
-        @Override
-        public String GetString(String description) {
-            return character.toString();
-        }
-
-        @Override
-        public int GetInt(String description) {
-            return character;
+            isExecuted = true;
         }
     }
 }

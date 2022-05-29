@@ -10,8 +10,8 @@ public class OutputTest {
     public void outputTest() {
         Output output = new OutputController();
 
-        assertDoesNotThrow(() -> output.print("test 1"));
         assertDoesNotThrow(() -> output.printLn("test 2"));
-        assertDoesNotThrow(() -> output.format("%s", "test 3"));
+        assertDoesNotThrow(() -> output.format("%s\r\n", "test 3"));
+        assertDoesNotThrow(() -> output.print("test 1"));
     }
 }

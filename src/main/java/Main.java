@@ -1,3 +1,5 @@
+import Common.DatabaseCache;
+import Common.Interface.Cache;
 import Controller.*;
 
 public class Main {
@@ -5,8 +7,10 @@ public class Main {
         var output = new OutputController();
         var input = new InputController(output);
         var mainMenu = new MenuController();
+        var cache = new DatabaseCache();
 
-        var appMenu = new AppMenu(mainMenu, output, input);
+        var appMenu = new AppMenu(mainMenu, cache, output, input);
+
 
 
         mainMenu.Init(appMenu, output, input);

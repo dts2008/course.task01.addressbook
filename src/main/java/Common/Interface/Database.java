@@ -5,7 +5,7 @@ import java.util.List;
 public interface Database<T> {
     Integer Insert(T item);
 
-    boolean Update(Integer id, T item);
+    boolean Update(T item);
 
     boolean Delete(Integer id);
 

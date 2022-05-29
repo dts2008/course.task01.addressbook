@@ -1,10 +1,12 @@
 package Common;
 
+import Common.Interface.Cache;
 import Controller.DatabaseController;
-import DTO.CityInfo;
-import DTO.UserInfo;
+import DTO.*;
+import java.util.HashMap;
+import java.util.Map;
 
-public final class DatabaseCache {
+public final class DatabaseCache implements Cache {
 
     public static final int nulId = -1;
 
@@ -12,48 +14,37 @@ public final class DatabaseCache {
 
     private DatabaseController<CityInfo> cities = new DatabaseController<CityInfo>();
 
-    private static DatabaseCache INSTANCE;
+    private Map<String, DatabaseController<?>> items = new HashMap<>();
 
-    private DatabaseCache() {
+    public DatabaseCache() {
         DefaultDate();
     }
 
-    public static DatabaseCache getInstance() {
-        if(INSTANCE == null) {
-            INSTANCE = new DatabaseCache();
-        }
-
-        return INSTANCE;
-    }
-
-    public DatabaseController<UserInfo> getUsers()
+    public <T extends CommonInfo> DatabaseController<T> getInfo(Class<T> clazz)
     {
-        return users;
-    }
+        var item = items.get(clazz.getTypeName());
 
-    public DatabaseController<CityInfo> getCities()
-    {
-        return cities;
+        return (DatabaseController<T>)item;
     }
 
     private void DefaultDate()
     {
         AddCities();
         AddUsers();
+
+        items.put(CityInfo.class.getTypeName(), cities);
+        items.put(UserInfo.class.getTypeName(), users);
     }
 
     private void AddCities()
     {
         var kyiv = new CityInfo();
-        kyiv.setId(1);
         kyiv.setName("Kyiv");
 
         var lviv = new CityInfo();
-        lviv.setId(2);
         lviv.setName("Lviv");
 
         var kharkiv = new CityInfo();
-        kharkiv.setId(3);
         kharkiv.setName("Kharkiv");
 
         cities.Insert(kyiv);
@@ -64,17 +55,14 @@ public final class DatabaseCache {
     private void AddUsers()
     {
         var user1 = new UserInfo();
-        user1.setId(1);
         user1.setCityId(1);
         user1.setFIO("Ivan Ivanovich");
 
         var user2 = new UserInfo();
-        user2.setId(2);
         user2.setCityId(2);
         user2.setFIO("Petr Petrovich");
 
         var user3 = new UserInfo();
-        user3.setId(3);
         user3.setCityId(3);
         user3.setFIO("Michael Kirilov");
 

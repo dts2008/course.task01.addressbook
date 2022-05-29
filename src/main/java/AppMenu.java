@@ -1,5 +1,6 @@
 import Common.DatabaseCache;
 import Common.Interface.*;
+import DTO.CityInfo;
 import DTO.UserInfo;
 
 public class AppMenu {
@@ -10,11 +11,14 @@ public class AppMenu {
 
     private Input input;
 
-    public AppMenu(Menu menu, Output output, Input input)
+    private Cache cache;
+
+    public AppMenu(Menu menu, Cache cache, Output output, Input input)
     {
         this.menu = menu;
         this.output = output;
         this.input = input;
+        this.cache = cache;
     }
 
     @MenuItem(Name = "Menu", Order = 1, Key = 'm')
@@ -26,20 +30,21 @@ public class AppMenu {
     @MenuItem(Name = "Show Users", Order = 2, Key = 's')
     public void ShowUsers()
     {
-        var users = DatabaseCache.getInstance().getUsers();
+
+        var users = cache.getInfo(UserInfo.class);
 
         final int tableSize = 51;
 
         ShowSeparator(tableSize);
         output.format("| %10s | %20s | %10s |\r\n", "#", "FIO", "City");
-        //System.out.format("| %10s | %20s | %10s |\r\n", "#", "FIO", "City");
         ShowSeparator(tableSize);
 
+        var cities = cache.getInfo(CityInfo.class);
         for (var info: users.Select())
         {
             String cityName = "";
 
-            var city = DatabaseCache.getInstance().getCities().Select(info.getCityId());
+            var city = cities.Select(info.getCityId());
             if (city != null)
                 cityName = city.getName();
 
@@ -52,7 +57,7 @@ public class AppMenu {
     @MenuItem(Name = "Show Cities", Key = 'c')
     public void ShowCities()
     {
-        var cities = DatabaseCache.getInstance().getCities();
+        var cities = cache.getInfo(CityInfo.class);
 
         final int tableSize = 38;
 
@@ -81,7 +86,7 @@ public class AppMenu {
 
         user.setCityId(cityId);
 
-        int id = DatabaseCache.getInstance().getUsers().Insert(user);
+        int id = cache.getInfo(UserInfo.class).Insert(user);
 
         output.format("Added id: #%d\r\n", id);
     }
@@ -91,7 +96,7 @@ public class AppMenu {
     {
         int id = input.GetInt("Input user Id: ");
 
-        var user = DatabaseCache.getInstance().getUsers().Select(id);
+        var user = cache.getInfo(UserInfo.class).Select(id);
 
         if (user == null)
         {
@@ -101,7 +106,7 @@ public class AppMenu {
 
         String cityPattern;
 
-        var city = DatabaseCache.getInstance().getCities().Select(user.getId());
+        var city = cache.getInfo(CityInfo.class).Select(user.getCityId());
 
         if (city != null)
             cityPattern = String.format("City (%s #%d): ", city.getName(), user.getCityId());
@@ -116,7 +121,7 @@ public class AppMenu {
 
         user.setCityId(cityId);
 
-        if (DatabaseCache.getInstance().getUsers().Update(user.getId(), user))
+        if (cache.getInfo(UserInfo.class).Update(user))
             output.format("Updated User #%d.\r\n", user.getId());
         else
             output.format("Error to update User #%d.\r\n", user.getId());
@@ -127,14 +132,14 @@ public class AppMenu {
     {
         int id = input.GetInt("Input user Id: ");
 
-        var user = DatabaseCache.getInstance().getUsers().Select(id);
+        var user = cache.getInfo(UserInfo.class).Select(id);
 
         if (user == null) {
             output.format("User #%d is wrong.\r\n", id);
             return;
         }
 
-        if (DatabaseCache.getInstance().getUsers().Delete(id)) {
+        if (cache.getInfo(UserInfo.class).Delete(id)) {
             output.format("User #%d was deleted.\r\n", id);
         }
         else {
@@ -158,10 +163,11 @@ public class AppMenu {
 
     private int GetCity(String description)
     {
+        var cities = cache.getInfo(CityInfo.class);
         while (true) {
             int cityId = input.GetInt(description);
 
-            var city = DatabaseCache.getInstance().getCities().Select(cityId);
+            var city = cities.Select(cityId);
             if (city == null) {
                 output.format("City #%d is wrong.\r\n", cityId);
 

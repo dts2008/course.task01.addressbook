@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DatabaseController<T> implements Database<T> {
+public class DatabaseController<T extends CommonInfo> implements Database<T> {
 
     private AtomicInteger lastIdentity = new AtomicInteger();
 
@@ -16,27 +16,21 @@ public class DatabaseController<T> implements Database<T> {
 
     @Override
     public Integer Insert(T item) {
-        Integer id = 0;
-
-        if (item instanceof CommonInfo) {
-            id = ((CommonInfo) item).getId();
-        }
-
-        if (id == 0)
-            id = lastIdentity.incrementAndGet();
+        Integer id = lastIdentity.incrementAndGet();
+        item.setId(id);
 
         dataBuffer.put(id, item);
         return id;
     }
 
     @Override
-    public boolean Update(Integer id, T item) {
-        var current = dataBuffer.get(id);
+    public boolean Update(T item) {
+        var current = dataBuffer.get(item.getId());
 
         if (current == null)
             return false;
 
-        dataBuffer.put(id, item);
+        dataBuffer.put(item.getId(), item);
 
         return true;
     }
