@@ -57,14 +57,20 @@ public final class DatabaseCache implements Cache {
         var user1 = new UserInfo();
         user1.setCityId(1);
         user1.setFIO("Ivan Ivanovich");
+        user1.setEmail("ivan@google.com");
+        user1.setPhone("+38(050)100-10-01");
 
         var user2 = new UserInfo();
         user2.setCityId(2);
         user2.setFIO("Petr Petrovich");
+        user2.setEmail("petr@google.com");
+        user2.setPhone("+38(050)100-10-02");
 
         var user3 = new UserInfo();
         user3.setCityId(3);
         user3.setFIO("Michael Kirilov");
+        user3.setEmail("michael@google.com");
+        user3.setPhone("+38(050)100-10-03");
 
         users.Insert(user1);
         users.Insert(user2);

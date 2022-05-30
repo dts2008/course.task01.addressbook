@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.stream.Collectors;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -45,7 +47,7 @@ public class AppMenuTest {
     @Test
     public void showUsersTest()
     {
-        appMenu.ShowUsers();
+        appMenu.showUsers();
 
         int count = cache.getInfo(UserInfo.class).Select().size();
         int headers = 1;
@@ -54,9 +56,27 @@ public class AppMenuTest {
     }
 
     @Test
+    public void searchUsersTest()
+    {
+        String namePattern = "Ivan";
+        when(input.GetString(anyString())).thenReturn("Ivan");
+        appMenu.searchUsers();
+
+        var users = cache.getInfo(UserInfo.class);
+
+        var ivans = users.Select().
+                stream().filter(n->n.getFIO().indexOf(namePattern) != -1).
+                collect(Collectors.toList()).size();
+
+        int headers = 1;
+
+        verify(output, times(ivans + headers)).format(anyString(),any());
+    }
+
+    @Test
     public void showCitiesTest()
     {
-        appMenu.ShowCities();
+        appMenu.showCities();
 
         int count = cache.getInfo(CityInfo.class).Select().size();
         int headers = 1;
@@ -67,10 +87,10 @@ public class AppMenuTest {
     @Test
     public void addTest()
     {
-        when(input.GetString(anyString())).thenReturn("FIO");
+        when(input.GetString(anyString())).thenReturn("FIO").thenReturn("Email").thenReturn("Phones");
         when(input.GetInt(any())).thenReturn(1);
 
-        appMenu.Add();
+        appMenu.add();
 
         assertNotNull(cache.getInfo(UserInfo.class).Select(4));
     }
@@ -79,9 +99,9 @@ public class AppMenuTest {
     public void editTest()
     {
         when(input.GetInt(any())).thenReturn(1).thenReturn(2);
-        when(input.GetString(anyString())).thenReturn("FIO");
+        when(input.GetString(anyString())).thenReturn("FIO").thenReturn("Email").thenReturn("Phones");;
 
-        appMenu.Edit();
+        appMenu.edit();
 
         var user = cache.getInfo(UserInfo.class).Select(1);
 
@@ -93,7 +113,7 @@ public class AppMenuTest {
     public void removeTest()
     {
        when(input.GetInt(any())).thenReturn(1);
-       appMenu.Remove();
+       appMenu.remove();
 
        assertNull(cache.getInfo(UserInfo.class).Select(1));
     }
@@ -101,7 +121,7 @@ public class AppMenuTest {
     @Test
     public void exitTest()
     {
-        appMenu.Exit();
+        appMenu.exit();
         verify(menu).Exit();
     }
 

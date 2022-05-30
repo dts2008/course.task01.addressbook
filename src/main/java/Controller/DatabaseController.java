@@ -3,7 +3,9 @@ package Controller;
 import Common.Interface.Database;
 import DTO.CommonInfo;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,6 +21,8 @@ public class DatabaseController<T extends CommonInfo> implements Database<T> {
         Integer id = lastIdentity.incrementAndGet();
         item.setId(id);
 
+        item.setUpdated(new Timestamp(new Date().getTime()));
+
         dataBuffer.put(id, item);
         return id;
     }
@@ -30,6 +34,7 @@ public class DatabaseController<T extends CommonInfo> implements Database<T> {
         if (current == null)
             return false;
 
+        item.setUpdated(new Timestamp(new Date().getTime()));
         dataBuffer.put(item.getId(), item);
 
         return true;

@@ -1,7 +1,12 @@
 import Common.DatabaseCache;
 import Common.Interface.*;
+import Controller.DatabaseController;
 import DTO.CityInfo;
 import DTO.UserInfo;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AppMenu {
 
@@ -27,35 +32,30 @@ public class AppMenu {
         menu.ShowMenu();
     }
 
-    @MenuItem(Name = "Show Users", Order = 2, Key = 's')
-    public void ShowUsers()
+    @MenuItem(Name = "Show Users", Order = 2, Key = 'u')
+    public void showUsers()
     {
 
         var users = cache.getInfo(UserInfo.class);
+        showUsersTable(users.Select());
+    }
 
-        final int tableSize = 51;
+    @MenuItem(Name = "Search Users", Order = 2, Key = 's')
+    public void searchUsers()
+    {
+        var users = cache.getInfo(UserInfo.class);
 
-        ShowSeparator(tableSize);
-        output.format("| %10s | %20s | %10s |\r\n", "#", "FIO", "City");
-        ShowSeparator(tableSize);
+        String name = input.GetString("Name of user: ");
 
-        var cities = cache.getInfo(CityInfo.class);
-        for (var info: users.Select())
-        {
-            String cityName = "";
+        var result = users.Select().
+                stream().filter(n->n.getFIO().indexOf(name) != -1).
+                collect(Collectors.toList());
 
-            var city = cities.Select(info.getCityId());
-            if (city != null)
-                cityName = city.getName();
-
-            output.format("| %10d | %20s | %10s |\r\n",info.getId(),info.getFIO(), cityName);
-        }
-
-        ShowSeparator(tableSize);
+        showUsersTable(result);
     }
 
     @MenuItem(Name = "Show Cities", Key = 'c')
-    public void ShowCities()
+    public void showCities()
     {
         var cities = cache.getInfo(CityInfo.class);
 
@@ -74,17 +74,20 @@ public class AppMenu {
     }
 
     @MenuItem(Name = "Add User", Key = 'a')
-    public void Add()
+    public void add()
     {
         var user = new UserInfo();
 
         user.setFIO(input.GetString("FIO: "));
 
-        int cityId = GetCity("City: ");
+        int cityId = getCity("City: ");
         if (cityId == DatabaseCache.nulId)
             return;
 
         user.setCityId(cityId);
+
+        user.setEmail(input.GetString("Email: "));
+        user.setPhone(input.GetString("Phones: "));
 
         int id = cache.getInfo(UserInfo.class).Insert(user);
 
@@ -92,7 +95,7 @@ public class AppMenu {
     }
 
     @MenuItem(Name = "Edit User", Key = 'e')
-    public void Edit()
+    public void edit()
     {
         int id = input.GetInt("Input user Id: ");
 
@@ -104,8 +107,9 @@ public class AppMenu {
             return;
         }
 
-        String cityPattern;
+        user.setFIO(input.GetString(String.format("FIO (%s): ", user.getFIO())));
 
+        String cityPattern;
         var city = cache.getInfo(CityInfo.class).Select(user.getCityId());
 
         if (city != null)
@@ -113,13 +117,14 @@ public class AppMenu {
         else
             cityPattern = String.format("City (#%d): ", user.getCityId());
 
-        user.setFIO(input.GetString(String.format("FIO (%s): ", user.getFIO())));
-
-        int cityId = GetCity(cityPattern);
+        int cityId = getCity(cityPattern);
         if (cityId == DatabaseCache.nulId)
             return;
 
         user.setCityId(cityId);
+
+        user.setEmail(input.GetString(String.format("Email (%s): ", user.getEmail())));
+        user.setPhone(input.GetString(String.format("Phones (%s): ", user.getPhone())));
 
         if (cache.getInfo(UserInfo.class).Update(user))
             output.format("Updated User #%d.\r\n", user.getId());
@@ -128,7 +133,7 @@ public class AppMenu {
     }
 
     @MenuItem(Name = "Remove User", Key = 'r')
-    public void Remove()
+    public void remove()
     {
         int id = input.GetInt("Input user Id: ");
 
@@ -148,7 +153,7 @@ public class AppMenu {
     }
 
     @MenuItem(Name = "Exit", Key = 'q')
-    public void Exit()
+    public void exit()
     {
         menu.Exit();
     }
@@ -161,7 +166,7 @@ public class AppMenu {
         output.printLn("");
     }
 
-    private int GetCity(String description)
+    private int getCity(String description)
     {
         var cities = cache.getInfo(CityInfo.class);
         while (true) {
@@ -178,5 +183,32 @@ public class AppMenu {
             else
                 return cityId;
         }
+    }
+
+    private void showUsersTable(List<UserInfo> users) {
+
+        var cities = cache.getInfo(CityInfo.class);
+        final int tableSize = 110;
+
+        ShowSeparator(tableSize);
+        output.format("| %4s | %20s | %10s | %20s | %17s | %20s |\r\n", "#", "FIO", "City", "Email", "Phones", "Updated");
+        ShowSeparator(tableSize);
+
+
+        for (var info: users)
+        {
+            String cityName = "";
+
+            var city = cities.Select(info.getCityId());
+            if (city != null)
+                cityName = city.getName();
+
+            var dateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+
+            output.format("| %4d | %20s | %10s | %20s | %17s | %20s |\r\n",info.getId(),info.getFIO(), cityName,
+                    info.getEmail(), info.getPhone(),dateFormat.format(info.getUpdated()));
+        }
+
+        ShowSeparator(tableSize);
     }
 }
