@@ -176,8 +176,8 @@ public class AppMenu {
             if (city == null) {
                 output.format("City #%d is wrong.\r\n", cityId);
 
-                String again = input.GetString("Do you want to try again? (y/n): ");
-                if (!again.equals("y"))
+                Character again = input.GetChar("Do you want to try again? (y/n): ");
+                if (again != 'y')
                     return DatabaseCache.nulId;
             }
             else

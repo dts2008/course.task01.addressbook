@@ -88,7 +88,8 @@ public class AppMenuTest {
     public void addTest()
     {
         when(input.GetString(anyString())).thenReturn("FIO").thenReturn("Email").thenReturn("Phones");
-        when(input.GetInt(any())).thenReturn(1);
+        when(input.GetInt(any())).thenReturn(5).thenReturn(1);
+        when(input.GetChar(any())).thenReturn('y');
 
         appMenu.add();
 
