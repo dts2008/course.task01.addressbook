@@ -1,12 +1,8 @@
-import Common.Interface.Input;
-import Common.Interface.Output;
-import Controller.InputController;
-import Controller.OutputController;
-import org.junit.jupiter.api.BeforeAll;
+import org.example.addressbook.application.Common.Interface.Output;
+import org.example.addressbook.application.Controller.InputController;
+import org.example.addressbook.application.Controller.OutputController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

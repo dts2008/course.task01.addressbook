@@ -1,8 +1,15 @@
-package Common;
+package org.example.addressbook.application.Common;
 
-import Common.Interface.Cache;
-import Controller.DatabaseController;
-import DTO.*;
+import lombok.RequiredArgsConstructor;
+import org.example.addressbook.application.Common.Interface.Cache;
+import org.example.addressbook.application.Controller.DatabaseController;
+import org.example.addressbook.application.DTO.CityInfo;
+import org.example.addressbook.application.DTO.CommonInfo;
+import org.example.addressbook.application.DTO.UserInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +23,10 @@ public final class DatabaseCache implements Cache {
 
     private Map<String, DatabaseController<?>> items = new HashMap<>();
 
-    public DatabaseCache() {
+    private final ApplicationContext context;
+
+    public DatabaseCache(ApplicationContext context) {
+        this.context = context;
         DefaultDate();
     }
 

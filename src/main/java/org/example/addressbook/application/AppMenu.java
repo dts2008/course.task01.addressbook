@@ -1,35 +1,38 @@
-import Common.DatabaseCache;
-import Common.Interface.*;
-import Controller.DatabaseController;
-import DTO.CityInfo;
-import DTO.UserInfo;
+package org.example.addressbook.application;
+
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.example.addressbook.application.Common.DatabaseCache;
+import org.example.addressbook.application.DTO.CityInfo;
+import org.example.addressbook.application.DTO.UserInfo;
+import org.example.addressbook.application.Common.Interface.*;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AppMenu {
+@RequiredArgsConstructor
+public class AppMenu implements MenuItems{
 
     private Menu menu;
 
-    private Output output;
+    private final Output output;
 
-    private Input input;
+    private final  Input input;
 
-    private Cache cache;
+    private final  Cache cache;
 
-    public AppMenu(Menu menu, Cache cache, Output output, Input input)
+    public void SetMenuController(Menu menu)
     {
         this.menu = menu;
-        this.output = output;
-        this.input = input;
-        this.cache = cache;
     }
 
     @MenuItem(Name = "Menu", Order = 1, Key = 'm')
     public void ShowMenu()
     {
-        menu.ShowMenu();
+        if (menu != null)
+            menu.ShowMenu();
     }
 
     @MenuItem(Name = "Show Users", Order = 2, Key = 'u')

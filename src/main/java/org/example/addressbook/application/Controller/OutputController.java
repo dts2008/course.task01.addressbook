@@ -1,6 +1,7 @@
-package Controller;
+package org.example.addressbook.application.Controller;
 
-import Common.Interface.Output;
+import org.example.addressbook.application.Common.Interface.Output;
+import org.springframework.stereotype.Component;
 
 public class OutputController implements Output {
 

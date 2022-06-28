@@ -1,15 +1,19 @@
-import Common.DatabaseCache;
-import Common.Interface.*;
-import Controller.InputController;
-import Controller.MenuController;
-import Controller.OutputController;
-import DTO.CityInfo;
-import DTO.UserInfo;
+import org.example.addressbook.application.Common.DatabaseCache;
+import org.example.addressbook.application.DTO.CityInfo;
+import org.example.addressbook.application.DTO.UserInfo;
+import org.example.addressbook.application.AppMenu;
+import org.example.addressbook.application.Common.Interface.Cache;
+import org.example.addressbook.application.Common.Interface.Input;
+import org.example.addressbook.application.Common.Interface.Menu;
+import org.example.addressbook.application.Common.Interface.Output;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.stream.Collectors;
 
@@ -29,12 +33,22 @@ public class AppMenuTest {
 
     private AppMenu appMenu;
 
+    private static ApplicationContext context;
+
+    @BeforeAll
+    static void Init()
+    {
+        context = new ClassPathXmlApplicationContext("context.xml");
+    }
+
     @BeforeEach
     void setUp()
     {
         MockitoAnnotations.openMocks(this);
-        cache = new DatabaseCache();
-        appMenu = new AppMenu(menu, cache, output, input);
+
+        cache = context.getBean(Cache.class);
+        appMenu = new AppMenu(output, input, cache);
+        appMenu.SetMenuController(menu);
     }
 
     @Test
@@ -113,10 +127,10 @@ public class AppMenuTest {
     @Test
     public void removeTest()
     {
-       when(input.GetInt(any())).thenReturn(1);
+       when(input.GetInt(any())).thenReturn(3);
        appMenu.remove();
 
-       assertNull(cache.getInfo(UserInfo.class).Select(1));
+       assertNull(cache.getInfo(UserInfo.class).Select(3));
     }
 
     @Test

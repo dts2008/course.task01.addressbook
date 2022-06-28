@@ -1,4 +1,4 @@
-package Common.Interface;
+package org.example.addressbook.application.Common.Interface;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

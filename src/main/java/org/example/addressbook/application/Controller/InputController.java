@@ -1,13 +1,16 @@
-package Controller;
+package org.example.addressbook.application.Controller;
 
-import Common.Interface.*;
-import lombok.Getter;
 import lombok.Setter;
+import org.example.addressbook.application.Common.Interface.Input;
+import org.example.addressbook.application.Common.Interface.Output;
+import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
 import java.util.function.Supplier;
 
 public class InputController implements Input {
+
+    private static int defaultInt = 0;
 
     private final Output output;
 
@@ -41,7 +44,11 @@ public class InputController implements Input {
         if (description != null)
             output.print(description);
 
-        return Integer.valueOf(source.get());
+        try {
+            return Integer.valueOf(source.get());
+        } catch (NumberFormatException e) {
+            return defaultInt;
+        }
     }
 
     private static String getStringDefault()

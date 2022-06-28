@@ -1,10 +1,8 @@
-package DTO;
+package org.example.addressbook.application.DTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
-
-import java.sql.Timestamp;
 
 @Data
 @Jacksonized

@@ -1,7 +1,7 @@
-package Controller;
+package org.example.addressbook.application.Controller;
 
-import Common.Interface.Database;
-import DTO.CommonInfo;
+import org.example.addressbook.application.Common.Interface.Database;
+import org.example.addressbook.application.DTO.CommonInfo;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DatabaseController<T extends CommonInfo> implements Database<T> {
 
-    private AtomicInteger lastIdentity = new AtomicInteger();
+    private AtomicInteger lastIdentity = new AtomicInteger(0);
 
     private HashMap<Integer, T> dataBuffer = new HashMap<>();
 

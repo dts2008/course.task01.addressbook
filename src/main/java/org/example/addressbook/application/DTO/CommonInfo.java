@@ -1,4 +1,4 @@
-package DTO;
+package org.example.addressbook.application.DTO;
 
 import lombok.Data;
 

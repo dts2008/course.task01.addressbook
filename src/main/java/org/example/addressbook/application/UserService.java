@@ -1,4 +1,6 @@
-import DTO.UserInfo;
+package org.example.addressbook.application;
+
+import org.example.addressbook.application.DTO.UserInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

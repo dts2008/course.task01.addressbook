@@ -1,4 +1,4 @@
-package Common.Interface;
+package org.example.addressbook.application.Common.Interface;
 
 public interface Input {
     Character GetChar(String description);

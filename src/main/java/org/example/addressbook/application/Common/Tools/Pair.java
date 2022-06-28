@@ -1,4 +1,4 @@
-package Common.Tools;
+package org.example.addressbook.application.Common.Tools;
 
 import lombok.Data;
 

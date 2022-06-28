@@ -1,16 +1,14 @@
-import Common.Interface.*;
-import Controller.MenuController;
+import org.example.addressbook.application.Common.Interface.*;
+import org.example.addressbook.application.Controller.MenuController;
 import lombok.Getter;
-import lombok.Setter;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.mockito.stubbing.OngoingStubbing;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,10 +34,10 @@ public class MenuControllerTest {
         boolean isCall = false;
         Mockito.when(input.GetChar(any())).thenReturn('m');
 
-        var menu = new MenuController();
-        TestMenu testMenu = new TestMenu(menu);
+        TestMenu testMenu = new TestMenu();
+        var menu = new MenuController(testMenu, output, input);
 
-        menu.Init(testMenu, output, input);
+        menu.Init();
         menu.Loop();
 
         assertEquals(testMenu.isExecuted, true);
@@ -49,28 +47,34 @@ public class MenuControllerTest {
     public void wrongTest() {
         Mockito.when(input.GetChar(any())).thenReturn('x').thenReturn('m');
 
-        var menu = new MenuController();
-        var testMenu = new TestMenu(menu);
+        TestMenu testMenu = new TestMenu();
+        var menu = new MenuController(testMenu, output, input);
 
-        menu.Init(testMenu, output, input);
+        menu.Init();
         menu.Loop();
 
         verify(output).printLn("Wrong command.");
         assertEquals(testMenu.isExecuted, true);
     }
 
-    private class TestMenu
+    private class TestMenu implements MenuItems
     {
         @Getter
         private boolean isExecuted;
 
         private Menu menu;
 
-        public TestMenu(Menu menu)
+        public void SetMenuController(Menu menu)
         {
             isExecuted = false;
             this.menu = menu;
         }
+
+//        public TestMenu(Menu menu)
+//        {
+//            isExecuted = false;
+//            this.menu = menu;
+//        }
 
         @MenuItem(Name = "Menu", Order = 1, Key = 'm')
         public void ShowMenu()

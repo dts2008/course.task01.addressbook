@@ -1,10 +1,10 @@
-import Common.Interface.Database;
-import Controller.DatabaseController;
-import DTO.CityInfo;
+import org.example.addressbook.application.Common.Interface.Database;
+import org.example.addressbook.application.Controller.DatabaseController;
+import org.example.addressbook.application.DTO.CityInfo;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import DTO.UserInfo;
+import org.example.addressbook.application.DTO.UserInfo;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
